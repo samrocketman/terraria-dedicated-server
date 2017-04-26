@@ -27,3 +27,9 @@ cd server
 curl -Lo dedicated-server.zip "${terraria_url}/${ds_url#/}"
 
 unzip dedicated-server.zip
+
+if [ ! -d Linux ]; then
+  DIR="$(ls -1 | grep -v dedicated-server.zip)"
+  mv "$DIR"/* ./
+  rmdir "$DIR"
+fi
