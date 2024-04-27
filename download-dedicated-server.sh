@@ -11,7 +11,7 @@
 #  Downloads and extracts terraria dedicated server to the server/ dir.
 
 download_server() {
-  [ -f download-utilities.sh ] && ./download-utilities.sh "$@" || ./download-utilities.sh "$@"
+  [ -f download-utilities.sh ] && ./download-utilities.sh "$@" || download-utilities.sh "$@"
 }
 
 if ! type -P download-utilities.sh &> /dev/null; then
