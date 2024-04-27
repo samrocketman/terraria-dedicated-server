@@ -5,21 +5,20 @@ run on Linux to make it easy for hosting a dedicated server.
 
 # Download dedicated server
 
-Visit [terraria.org][1], at the bottom of the site (the very bottom) you'll see
-a small link titled `Dedicated Server`.  Download the dedicated server.
-
-Alternatively, execute:
-
     ./download-dedicated-server.sh
 
-# Setup server configuration
+Which uses [yml-install-files][yml-install-files] to download via
+[`terraria.yaml`](terraria.yaml).
 
+[yml-install-files]: https://github.com/samrocketman/yml-install-files
 
-Copy the `serverconfig.txt` out of the Terraria directory.
+# Launch your server
 
-    cp server/Linux/serverconfig.txt ./
+    ./terraria.sh
 
-Edit `serverconfig.txt` and point it to the world in Steam.
+# Optional Setup server configuration
+
+Create `serverconfig.txt` at the root of this repository.
 
 # Start the server
 
@@ -37,8 +36,7 @@ inside of the dedicated server.  Type `exit` to exit the dedicated server.
 
 [`download-dedicated-server.sh`][2] is designed to always download the latest
 dedicated server from [terraria.org][1].  To update, simply run the script
-again.  It creates a backup of the old dedicated server in `server.old`
-directory.
+again.
 
 Update to latest:
 
