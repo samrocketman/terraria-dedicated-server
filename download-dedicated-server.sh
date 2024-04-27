@@ -10,26 +10,17 @@
 #DESCRIPTION
 #  Downloads and extracts terraria dedicated server to the server/ dir.
 
-#obtain the dedicated server URL
-terraria_url="https://terraria.org"
-ds_url="$(curl -sL https://terraria.org/ | grep -Eo $'[^\'"]+terraria-server-[^\'"]+')"
+download_server() {
+  [ -f download-utilities.sh ] && ./download-utilities.sh "$@" || ./download-utilities.sh "$@"
+}
 
-if [ ! -d 'server' ]; then
-  mkdir server
-else
-  rm -rf server.old
-  mv server server.old
-  mkdir server
+if ! type -P download-utilities.sh &> /dev/null; then
+  curl -sSfLO https://raw.githubusercontent.com/samrocketman/yml-install-files/main/download-utilities.sh
+  chmod 755 download-utilities.sh
 fi
 
-cd server
-
-curl -Lo dedicated-server.zip "${terraria_url}/${ds_url#/}"
-
-unzip dedicated-server.zip
-
-if [ ! -d Linux ]; then
-  DIR="$(ls -1 | grep -v dedicated-server.zip)"
-  mv "$DIR"/* ./
-  rmdir "$DIR"
+download_server --update terraria.yaml
+if ! git diff --exit-code &> /dev/null; then
+  download_server --checksum -I any:any terraria.yaml
 fi
+download_server terraria.yaml

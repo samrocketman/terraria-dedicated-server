@@ -1,0 +1,45 @@
+versions:
+  terraria.zip: terraria-server-1449.zip
+checksums:
+  terraria.zip: 324fb9b3d3a59324cb5d96154f4fbc41c8f2d926f9bb2da1702f0230bd1b88d6
+utility:
+  terraria.zip: &terraria
+    dest: .
+    skip_if: |
+      set +x
+      eval 'echo "Terraria home: '"${extension}"'"'
+      [ "${inline_checksum:-false}" = false ] && \
+      grep -qF "${checksum}" "${dest}/${utility%.zip}"/checksum.txt
+    pre_command: rm -rf "${dest}/${utility%.zip}"
+    download: https://terraria.org/api/download/pc-dedicated-server/${version}
+    os:
+      Darwin: Mac
+    # Terraria home configuration
+    extension:
+      Linux: '$HOME/.local/share/Terraria'
+      Mac: '$HOME/Library/Application Support/Terraria'
+    post_command: |
+      TMP_DIR="$(mktemp -d)"
+      trap 'cd;rm -rf "${TMP_DIR}"' EXIT
+      dest="$(cd "$dest"; pwd)"
+      server_directory="${dest}/${utility%.zip}"
+      mkdir -p "${server_directory}"
+      pushd "${TMP_DIR}"
+      unzip "${dest}/${utility}"
+      find * -type f -name 'TerrariaServer*' -exec chmod 755 {} +
+      tar -c */"${os}" | tar --no-same-owner --strip-components=2 -xC "${server_directory}"
+      echo "${checksum}" > "${server_directory}"/checksum.txt
+    update: |
+      export download=https://terraria.org/api/get/dedicated-servers-names
+      # first element is PC
+      export extract='yq .[0]'
+      eval "${default_download_extract}"
+# the mobile and PC version are now the same
+#  terraria-mobile.zip:
+#    <<: *terraria
+#    download: https://terraria.org/api/download/mobile-dedicated-server/${version}
+#    update: |
+#      export download=https://terraria.org/api/get/dedicated-servers-names
+#      # second element mobile
+#      export extract='yq .[1]'
+#      eval "${default_download_extract}"
