@@ -14,13 +14,25 @@ download_server() {
   [ -f download-utilities.sh ] && ./download-utilities.sh "$@" || download-utilities.sh "$@"
 }
 
+checksum() {
+  if type -P shasum &> /dev/null; then
+    shasum -a 256 "$@"
+  elif type -P sha256sum &> /dev/null; then
+    sha256sum "$@"
+  else
+    echo 'ERROR: no checksum can be performed.' >&2
+    exit 1
+  fi
+}
+
 if ! type -P download-utilities.sh &> /dev/null; then
   curl -sSfLO https://raw.githubusercontent.com/samrocketman/yml-install-files/main/download-utilities.sh
   chmod 755 download-utilities.sh
 fi
 
+checksum_hash="$(checksum terraria.yaml)"
 download_server --update terraria.yaml
-if ! git diff --exit-code &> /dev/null; then
+if ! echo "$checksum_hash" | checksum -c - &> /dev/null; then
   download_server --checksum -I any:any terraria.yaml
 fi
 download_server terraria.yaml
